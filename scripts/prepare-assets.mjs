@@ -33,6 +33,24 @@ async function hero() {
   console.log("hero ->", path.relative(root, dest));
 }
 
+async function shareImage() {
+  // link-preview image: the portrait, square, like the reference (1200x1200)
+  const meta = await sharp(ref("hero_photo.jpg")).metadata();
+  const side = Math.min(meta.width, meta.height);
+  const top = Math.round((meta.height - side) / 2);
+  for (const name of ["opengraph-image.jpg", "twitter-image.jpg"]) {
+    const dest = out(`src/app/${name}`);
+    await sharp(ref("hero_photo.jpg"))
+      .extract({ left: Math.round((meta.width - side) / 2), top, width: side, height: side })
+      .resize(1200, 1200)
+      .grayscale()
+      .jpeg({ quality: 86, mozjpeg: true })
+      .toFile(dest);
+    await fs.writeFile(dest.replace(/\.jpg$/, ".alt.txt"), "Kaushal Shahare");
+  }
+  console.log("share image -> src/app/opengraph-image.jpg (1200x1200)");
+}
+
 async function character() {
   const dest = out("public/footer/character.webp");
   await ensureDir(dest);
@@ -213,6 +231,7 @@ async function grain() {
 
 await grain();
 await hero();
+await shareImage();
 await character();
 await crowd();
 await projects();

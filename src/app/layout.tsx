@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   keywords: ["Kaushal Shahare", "AI Engineer", "Full-Stack Developer", "LLM", "RAG", "React", "Node.js", "portfolio"],
   alternates: { canonical: "/" },
   openGraph: { title, description: site.description, type: "profile", url: "/", siteName: site.name, locale: "en_IN" },
-  twitter: { card: "summary_large_image", title, description: site.description },
+  twitter: { card: "summary", title, description: site.description },
   robots: { index: true, follow: true },
 };
 
