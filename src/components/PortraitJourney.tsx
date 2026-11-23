@@ -3,11 +3,10 @@
 import { useEffect, useRef } from "react";
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
 /**
  * The hero photo flies down into the biography slot as you scroll, growing and
- * doing one full turn around its vertical axis. Position comes straight from the
+ * flipping once around its vertical axis. Position comes straight from the
  * two real images, so it lands exactly on the bio portrait at any viewport size.
  */
 export function PortraitJourney({ src }: { src: string }) {
@@ -39,20 +38,41 @@ export function PortraitJourney({ src }: { src: string }) {
       stageEl.dataset.active = String(on);
       section.classList.toggle("portrait-flying", on);
     };
-    const render = () => {
-      raf = 0;
-      if (reduce.matches) return setActive(false);
-      const p = Math.min(1, Math.max(0, scrollY / end));
-      if (p <= 0 || p >= 1) return setActive(false);
-      const e = ease(p);
-      const scale = lerp(from.w / to.w, 1, e);
-      const cx = lerp(from.x, to.x, e);
-      const cy = lerp(from.y, to.y, e) - scrollY;
-      cardEl.style.transform = `translate3d(${cx - to.w / 2}px, ${cy - to.h / 2}px, 0) scale(${scale}) rotateY(${360 * e}deg)`;
-      cardEl.style.borderRadius = `${lerp(9, 16, e) / scale}px`;
+    // Progress trails the scroll with exponential damping (as in the reference),
+    // so the flight stays smooth even with a jumpy wheel or trackpad.
+    const coarse = matchMedia("(max-width: 700px) and (pointer: coarse)");
+    let h = 0; // displayed progress
+    let lastT = 0;
+    const target = () => Math.min(1, Math.max(0, scrollY / end));
+    const draw = () => {
+      const u = target();
+      if ((h <= 0 && u <= 0) || (h >= 1 && u >= 1)) return setActive(false);
+      const turn = h * h * (3 - 2 * h); // smoothstep, one half-turn
+      const scale = lerp(from.w / to.w, 1, h);
+      const cx = lerp(from.x, to.x, h);
+      const cy = lerp(from.y, to.y, h) - scrollY;
+      cardEl.style.transform = `translate3d(${cx - to.w / 2}px, ${cy - to.h / 2}px, 0) scale(${scale}) rotateY(${180 * turn}deg)`;
+      cardEl.style.borderRadius = `${lerp(9, 16, h) / scale}px`;
       setActive(true);
     };
+    const render = (now: number) => {
+      raf = 0;
+      if (reduce.matches) {
+        h = 0;
+        return setActive(false);
+      }
+      const dt = lastT ? Math.min(now - lastT, 64) : 16.67;
+      lastT = now;
+      const u = target();
+      h += (u - h) * (1 - Math.exp(-dt / (coarse.matches ? 100 : 65)));
+      const settled = Math.abs(u - h) < 1e-4;
+      if (settled) h = u;
+      draw();
+      if (settled) lastT = 0;
+      else raf = requestAnimationFrame(render);
+    };
     const queue = () => {
+      draw(); // keep the card glued to the page on this exact scroll frame
       if (!raf) raf = requestAnimationFrame(render);
     };
     const measure = () => {
