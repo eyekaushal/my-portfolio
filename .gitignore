@@ -1,0 +1,14 @@
+node_modules/
+.next/
+out/
+.vercel/
+.DS_Store
+*.log
+next-env.d.ts
+*.tsbuildinfo
+# large reference videos stay local only
+references/*.mov
+references/*.MOV
+references/*.mp4
+references/*.MP4
+references/recreate-the-crowd-footer.pdf

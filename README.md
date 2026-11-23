@@ -1,47 +1,40 @@
-# Kaushal — Portfolio
+# Kaushal Shahare — Portfolio
 
-A static, dependency-free portfolio site (plain HTML/CSS/JS). No build step required.
+Next.js 16 · React 19 · GSAP · plain CSS. Deployed on Vercel with Vercel Web Analytics.
 
-## Before you deploy — fill these in
-
-1. **`index.html`**
-   - LinkedIn URL — replace `REPLACE-WITH-YOUR-LINKEDIN`
-   - LeetCode URL — replace `REPLACE-WITH-YOUR-LEETCODE`
-   - Email — replace `REPLACE-WITH-YOUR-EMAIL@example.com` (in the `mailto:` link)
-   - The Experience section's job title link (`<h4><a href="#" ...>`) — add the company's real URL if it has one, or leave as `#`.
-2. **`assets/resume.pdf`** — this is a placeholder. Swap in your real resume, keeping the filename `resume.pdf` (or update the two `assets/resume.pdf` references in `index.html` if you rename it).
-3. **`assets/projects/*.svg`** — placeholder thumbnails. Swap in real screenshots (`.png`/`.jpg`) of GitPulse and Contextlab if you have them, and update the `src` in the Projects section of `index.html` to match.
-
-## Run locally
-
-Just open `index.html` in a browser, or serve it:
+## Run
 
 ```bash
-npx serve .
+npm install
+npm run dev        # http://localhost:3000
+npm run build && npm start   # production check
 ```
 
-## Deploy to Vercel
+## Edit content
 
-**Option A — Vercel CLI**
+Everything you read on the site lives in **`src/data/content.ts`**: hero lines, bio, tech-stack chips, projects (with their architecture diagrams), experience, contact text and links.
+
+## Images
+
+Source images live in `references/` and are processed by:
+
 ```bash
-npm i -g vercel
-cd kaushal-portfolio
-vercel
+npm run assets
 ```
-Follow the prompts (link/create a project, accept the defaults — it's a static site, no build command needed).
 
-**Option B — GitHub + Vercel dashboard**
-1. Push this folder to a new GitHub repo.
-2. Go to [vercel.com/new](https://vercel.com/new), import the repo.
-3. Framework preset: "Other". No build command, no output directory override needed.
-4. Deploy.
+It writes the hero photo, the trimmed footer character, the crowd sprite atlas (`public/footer/crowd-atlas.webp` + `src/data/crowd-atlas.json`), the grain texture and the resume.
+
+- **More crowd variety:** generate another 5×3 sheet with the prompt in the crowd-footer guide, then extend `crowd()` in `scripts/prepare-assets.mjs` to append it to the atlas.
+- **Project screenshots:** put PNG/JPGs in a folder and run `PROJECT_SRC_DIR=/path/to/folder npm run assets`; they land in `public/projects/` as WebP. Point the project's `image`/`preview` in `content.ts` at them.
 
 ## Structure
 
 ```
-index.html              Page content
-css/style.css            All styling
-js/script.js              Scroll-spy nav highlighting
-assets/resume.pdf         Resume (placeholder — replace)
-assets/projects/*.svg     Project thumbnails (placeholders — replace)
+src/app/            layout (fonts, theme boot, analytics), page, globals.css (all styling)
+src/components/     NavPill, Hero, PortraitJourney, sections (bio, tech stack),
+                    Projects + ArchitectureDiagram, Experience, Contact, CrowdFooter
+src/data/           content.ts, crowd-atlas.json (generated)
+scripts/            prepare-assets.mjs
+references/         source photos/artwork, measured reference spec
+legacy/             previous static site (not deployed)
 ```
