@@ -197,7 +197,7 @@ async function documents() {
 
 async function grain() {
   // 256x256 monochrome noise tile for the film-grain overlay
-  const size = 256;
+  const size = 192;
   const buf = Buffer.alloc(size * size * 4);
   let seed = 7;
   const rand = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
@@ -206,8 +206,8 @@ async function grain() {
     buf[i * 4] = buf[i * 4 + 1] = buf[i * 4 + 2] = v;
     buf[i * 4 + 3] = Math.round(18 + rand() * 30);
   }
-  const dest = out("public/grain.png");
-  await sharp(buf, { raw: { width: size, height: size, channels: 4 } }).png({ compressionLevel: 9 }).toFile(dest);
+  const dest = out("public/grain.webp");
+  await sharp(buf, { raw: { width: size, height: size, channels: 4 } }).webp({ quality: 55, alphaQuality: 60, effort: 6 }).toFile(dest);
   console.log("grain ->", path.relative(root, dest));
 }
 

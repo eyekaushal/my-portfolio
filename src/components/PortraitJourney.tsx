@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -12,6 +12,14 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 export function PortraitJourney({ src }: { src: string }) {
   const stage = useRef<HTMLDivElement>(null);
   const card = useRef<HTMLDivElement>(null);
+  // load the card's image after the page is up, so it never competes with the hero photo
+  const [img, setImg] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    const go = () => setImg(src);
+    if (document.readyState === "complete") go();
+    else window.addEventListener("load", go, { once: true });
+    return () => window.removeEventListener("load", go);
+  }, [src]);
 
   useEffect(() => {
     const stageEl = stage.current;
@@ -108,11 +116,11 @@ export function PortraitJourney({ src }: { src: string }) {
       <div ref={card} className="portrait-card">
         <div className="portrait-face portrait-face-front">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt="" decoding="async" />
+          {img ? <img src={img} alt="" decoding="async" /> : null}
         </div>
         <div className="portrait-face portrait-face-back">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt="" decoding="async" />
+          {img ? <img src={img} alt="" decoding="async" /> : null}
         </div>
       </div>
     </div>

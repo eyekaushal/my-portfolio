@@ -7,6 +7,7 @@ export const site = {
   roleLines: ["AI Engineer", "& Full-Stack Developer."],
   email: "kaushalss234@gmail.com",
   resume: "/Kaushal-Shahare-Resume.pdf",
+  url: "https://my-portfolio-nine-delta-11.vercel.app",
   description:
     "Kaushal Shahare is an AI engineer and full-stack developer who builds reliable products on top of AI, focused on cost, safety and trust.",
   year: 2026,
@@ -414,7 +415,7 @@ export const experience = {
       badge: "Completed",
       date: "June 2025 – December 2025",
       title: "Frontend Developer Intern",
-      place: "19teenInitiative",
+      place: "9TeenInitiative",
       placeSub: "Remote",
       description:
         "Built responsive, production-facing pages in React, turning design requirements into reusable UI components, and shipped features through code reviews.",
@@ -425,7 +426,7 @@ export const experience = {
       date: "2022 – 2026",
       title: "B.Tech in Computer Science (Cyber Security)",
       place: "G. H. Raisoni College of Engineering",
-      placeSub: "Nagpur · CGPA 7.4",
+      placeSub: "Nagpur · CGPA 7.44",
       description: "",
     },
   ],
@@ -464,12 +465,12 @@ export const heroCode = `const kaushal = {
   status: { open: ["Internships", "Full-Time"], city: "Bangalore" },
   experience: [
     { role: "Frontend Developer Intern",
-      company: "19teenInitiative", from: "June 2025", to: "December 2025" }
+      company: "9TeenInitiative", from: "June 2025", to: "December 2025" }
   ],
   education: [
     { degree: "B.Tech, Computer Science (Cyber Security)",
       college: "G. H. Raisoni College of Engineering", city: "Nagpur",
-      years: "2022–2026", cgpa: 7.4 }
+      years: "2022–2026", cgpa: 7.44 }
   ],
   projects: {
     contextlab: "Coding-agent cost profiler, npm",

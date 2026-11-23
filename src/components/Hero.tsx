@@ -7,12 +7,70 @@ import { hero, heroCode, site } from "@/data/content";
 import { CodeMark } from "./icons";
 
 /**
+ * Draws the code text into a canvas (in columns, like the reference). Canvas
+ * keeps this decorative layer out of the page's Largest Contentful Paint.
+ */
+function useCodeCanvas(wrap: React.RefObject<HTMLDivElement | null>, dim: React.RefObject<HTMLCanvasElement | null>, lit: React.RefObject<HTMLCanvasElement | null>) {
+  useEffect(() => {
+    const el = wrap.current, a = dim.current, b = lit.current;
+    if (!el || !a || !b) return;
+    let raf = 0;
+    const lines = `${heroCode}\n\n${heroCode}\n\n${heroCode}`.split("\n");
+    const paint = () => {
+      raf = 0;
+      const w = el.clientWidth, h = el.clientHeight;
+      if (!w || !h) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const cs = getComputedStyle(el);
+      for (const c of [a, b]) {
+        c.width = Math.round(w * dpr);
+        c.height = Math.round(h * dpr);
+      }
+      const ctx = a.getContext("2d");
+      if (!ctx) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.font = `400 12px ${cs.fontFamily}`;
+      ctx.fillStyle = cs.color;
+      ctx.textBaseline = "top";
+      const padX = 20, padY = 12, lh = 20.4, gap = 40;
+      const cols = Math.max(1, Math.min(3, Math.floor((w - 2 * padX + gap) / (520 + gap))));
+      const colW = (w - 2 * padX - gap * (cols - 1)) / cols;
+      const perCol = Math.ceil((h - padY) / lh);
+      for (let c = 0, i = 0; c < cols; c++) {
+        for (let r = 0; r < perCol; r++, i++) {
+          ctx.fillText(lines[i % lines.length], padX + c * (colW + gap), padY + r * lh, colW);
+        }
+      }
+      const ctxB = b.getContext("2d");
+      ctxB?.drawImage(a, 0, 0);
+    };
+    const queue = () => {
+      if (!raf) raf = requestAnimationFrame(paint);
+    };
+    const ro = new ResizeObserver(queue);
+    ro.observe(el);
+    const mo = new MutationObserver(queue);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    document.fonts?.ready.then(queue);
+    queue();
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, [wrap, dim, lit]);
+}
+
+/**
  * Faint code behind the headline. A second, brighter copy is masked by a radial
  * gradient that follows the pointer, so the code lights up around the cursor.
  * Pure CSS masking: the GPU composites it, no per-frame text rendering.
  */
 function GlyphBackground() {
   const ref = useRef<HTMLDivElement>(null);
+  const dimRef = useRef<HTMLCanvasElement>(null);
+  const litRef = useRef<HTMLCanvasElement>(null);
+  useCodeCanvas(ref, dimRef, litRef);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -79,11 +137,10 @@ function GlyphBackground() {
     };
   }, []);
 
-  const text = `${heroCode}\n\n${heroCode}`;
   return (
     <div ref={ref} className="glyph-background hero-code-background" aria-hidden="true">
-      <pre className="glyph-layer glyph-dim">{text}</pre>
-      <pre className="glyph-layer glyph-lit">{text}</pre>
+      <canvas ref={dimRef} className="glyph-layer glyph-dim" />
+      <canvas ref={litRef} className="glyph-layer glyph-lit" />
     </div>
   );
 }

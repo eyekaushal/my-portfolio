@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { site } from "@/data/content";
+import { site, socials } from "@/data/content";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -11,15 +11,32 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const productionHost = process.env.VERCEL_PROJECT_PRODUCTION_URL;
 const title = `${site.name} | ${site.role}`;
 
 export const metadata: Metadata = {
-  metadataBase: productionHost ? new URL(`https://${productionHost}`) : undefined,
+  metadataBase: new URL(site.url),
   title,
   description: site.description,
-  openGraph: { title, description: site.description, type: "website" },
+  applicationName: site.name,
+  authors: [{ name: site.name, url: site.url }],
+  keywords: ["Kaushal Shahare", "AI Engineer", "Full-Stack Developer", "LLM", "RAG", "React", "Node.js", "portfolio"],
+  alternates: { canonical: "/" },
+  openGraph: { title, description: site.description, type: "profile", url: "/", siteName: site.name, locale: "en_IN" },
   twitter: { card: "summary_large_image", title, description: site.description },
+  robots: { index: true, follow: true },
+};
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: site.name,
+  url: site.url,
+  image: `${site.url}/images/kaushal.jpg`,
+  jobTitle: site.role,
+  email: `mailto:${site.email}`,
+  address: { "@type": "PostalAddress", addressLocality: "Bangalore", addressCountry: "IN" },
+  alumniOf: { "@type": "CollegeOrUniversity", name: "G. H. Raisoni College of Engineering, Nagpur" },
+  sameAs: socials.map((s) => s.href),
 };
 
 export const viewport: Viewport = {
@@ -37,6 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" data-theme="dark" className={spaceGrotesk.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: boot }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }} />
       </head>
       <body>
         {children}

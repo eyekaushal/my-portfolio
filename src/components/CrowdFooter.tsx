@@ -95,7 +95,8 @@ export function CrowdFooter() {
       const ph = portraitEl.getBoundingClientRect().height || Math.min(365, H - 24);
       const s = Math.min(1, ph / 310);
       const o = W / (1440 * s);
-      const counts = W >= 600 ? [25, 16] : [Math.max(7, Math.round(25 * o)), Math.max(3, Math.round(16 * o))];
+      const k = Math.min(1, W / 1440); // thin the crowd on narrower screens so the character stays visible
+      const counts = W >= 600 ? [Math.max(14, Math.round(25 * k)), Math.max(9, Math.round(16 * k))] : [Math.max(7, Math.round(25 * o)), Math.max(3, Math.round(16 * o))];
       const total = counts[0] + counts[1];
       walkers = Array.from({ length: total }, (_, t): Walker => {
         const row = t < counts[0] ? 0 : 1;
@@ -264,7 +265,7 @@ export function CrowdFooter() {
           </span>
           <canvas ref={back} className="footer-crowd-layer footer-crowd-back" aria-hidden="true" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img ref={portrait} className="footer-crowd-portrait" src="/footer/character.webp" alt="" width={303} height={900} decoding="async" />
+          <img ref={portrait} className="footer-crowd-portrait" src="/footer/character.webp" alt="" width={303} height={900} loading="lazy" decoding="async" />
           <canvas ref={front} className="footer-crowd-layer footer-crowd-front" aria-hidden="true" />
         </button>
         <div className="footer-scene-bottom wrap">
