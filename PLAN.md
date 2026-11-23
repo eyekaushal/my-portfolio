@@ -19,13 +19,13 @@ Tick the boxes as we go. Each block = one progress bar.
 - [x] Pitch line (A) + tech-stack chips (TypeScript removed)
 - [x] Remaining open questions answered
 
-## Block 1 — Project setup  🟨 5/6
+## Block 1 — Project setup  🟩 6/6
 - [x] Next.js (App Router) + TypeScript + Tailwind CSS v4
 - [x] Space Grotesk via `next/font` (variable 300–700, metric-matched fallback)
 - [x] Design tokens for dark + light themes (from spec), grain overlay
 - [x] GSAP; rAF-driven scroll effects (native scroll, no Lenis)
 - [x] Old static site moved to `legacy/` (kept for reference, not deployed)
-- [ ] Vercel project linked, preview deploy works
+- [x] Vercel project linked, preview + production deploys work
 
 ## Block 2 — Nav pill + menu  🟩 6/6
 - [x] Fixed pill (320px, #141414, radius 20px): wordmark, theme toggle, menu button
@@ -78,13 +78,17 @@ Tick the boxes as we go. Each block = one progress bar.
 - [x] Pause/resume (click/keyboard), offscreen/tab-hidden pause, reduced motion
 - [x] Black strip with "Finally, some traffic on my website."
 
-## Block 10 — Polish, QA, deploy  🟨 3/6
+## Block 10 — Polish, QA, deploy  🟩 6/6
 - [x] Mobile (390px) layouts checked, no horizontal overflow
 - [x] prefers-reduced-motion everywhere
-- [x] 60fps check: portrait flight, scrolling and crowd all 60fps, 0 frames >20ms
-- [ ] SEO/OG image, favicon, resume link, sitemap
-- [ ] Side-by-side check against the reel and the live reference
-- [ ] Production deploy on Vercel
+- [x] 60fps check (0 frames >20ms); Lighthouse desktop 100 / mobile 96–97 performance, 100 a11y + SEO
+- [x] SEO: share image, favicon, resume link, sitemap, robots, structured data
+- [x] Side-by-side check: computed type sizes/weights/spacing match the reference at 1440px
+- [x] Production deploy on Vercel (my-portfolio-nine-delta-11.vercel.app)
+
+## Open
+- [ ] GitPulse live demo backend hangs (fix it, or link GitHub only)
+- [ ] Optional: more crowd sheets for variety
 
 ## Dropped by decision
 - /freelance page, /world 3D journey, Ask AI chatbot, cookie banner (Vercel Analytics is cookieless)
